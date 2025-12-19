@@ -15,10 +15,14 @@ def intent_node(state: AgentState) -> AgentState:
 
 
 def confidence_router(state: AgentState) -> str:
-    primary_conf = state["intent"]["primary"]["confidence"]
+    intent = state.get("intent") or {}
+    primary = intent.get("primary") or {}
 
-    if primary_conf >= CONFIDENCE_THRESHOLD:
+    confidence = primary.get("confidence", 0.0)
+
+    if confidence >= CONFIDENCE_THRESHOLD:
         return "plan"
+
     return "clarify"
 
 
