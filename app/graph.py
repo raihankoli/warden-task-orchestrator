@@ -38,8 +38,8 @@ def intent_node(state: AgentState) -> AgentState:
         "reasoning": reasoning
     }
 
-def 
-confidence_router(state: AgentState) -> str:
+
+def confidence_router(state: AgentState) -> str:
     intent = state.get("intent") or {}
     primary = intent.get("primary") or {}
 
