@@ -17,20 +17,13 @@ def intent_node(state: AgentState) -> AgentState:
         f"(confidence {primary['confidence']})"
     )
 
-    if result.get("secondary"):
-        for sec in result["secondary"]:
-            reasoning.append(
-                f"Detected secondary intent: {sec['name']}"
-            )
+    for sec in result.get("secondary", []):
+        reasoning.append(f"Detected secondary intent: {sec['name']}")
 
     if primary["confidence"] < CONFIDENCE_THRESHOLD:
-        reasoning.append(
-            "Confidence below threshold — clarification required"
-        )
+        reasoning.append("Confidence below threshold — clarification required")
     else:
-        reasoning.append(
-            "High confidence intent — proceeding to planning"
-        )
+        reasoning.append("High confidence intent — proceeding to planning")
 
     return {
         **state,
@@ -42,12 +35,10 @@ def intent_node(state: AgentState) -> AgentState:
 def confidence_router(state: AgentState) -> str:
     intent = state.get("intent") or {}
     primary = intent.get("primary") or {}
-
     confidence = primary.get("confidence", 0.0)
 
     if confidence >= CONFIDENCE_THRESHOLD:
         return "plan"
-
     return "clarify"
 
 
@@ -61,37 +52,33 @@ def clarify_node(state: AgentState) -> AgentState:
     }
 
 
-}
-
- def planner_nstate: AgentStatet -> AgentState:
-    plan = n = build_pstatetate["inten
-        re u
-          state,
-            "p: plan
-     
+def planner_node(state: AgentState) -> AgentState:
+    plan = build_plan(state["intent"])
+    return {
+        **state,
+        "plan": plan
+    }
 
 
-}
+def build_graph():
+    graph = StateGraph(AgentState)
 
- def build_gra:
-    graph = h = StateGrAgentStatet
+    graph.add_node("intent", intent_node)
+    graph.add_node("clarify", clarify_node)
+    graph.add_node("plan", planner_node)
 
-    graph.aph.add_node("int, intent_noden
-    graph.aph.add_node("clar, clarify_noden
-    graph.aph.add_node("p, planner_noden
+    graph.set_entry_point("intent")
 
-    graph.aph.set_entry_point("inte
-
-    graph.aph.add_conditional_ed
-            "int,
+    graph.add_conditional_edges(
+        "intent",
         confidence_router,
-         
-                "p: n": "p,
-                "clar: y": "clar
-         
-     
+        {
+            "plan": "plan",
+            "clarify": "clarify"
+        }
+    )
 
-    graph.aph.add_edge("p, END 
-    graph.aph.add_edge("clar, END 
+    graph.add_edge("plan", END)
+    graph.add_edge("clarify", END)
 
-        re graph.aph.compi
+    return graph.compile()
