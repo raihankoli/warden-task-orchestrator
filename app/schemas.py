@@ -6,12 +6,12 @@ class UserRequest(BaseModel):
     query: str
 
 
-class AgentState(TypedDict):
+class AgentState(TypedDict, total=False):
     query: str
     intent: Optional[dict]
     plan: Optional[List[str]]
     reasoning: Optional[List[str]]
-
+    decision_path: Optional[List[str]]
 
 class IntentResult(TypedDict):
     name: str
@@ -22,7 +22,6 @@ class MultiIntentResult(TypedDict):
     primary: IntentResult
     secondary: Optional[List[IntentResult]]
 
-from typing import List, Optional, TypedDict
 
 
 class ExplainableOutput(TypedDict):
