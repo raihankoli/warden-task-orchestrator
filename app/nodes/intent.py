@@ -29,6 +29,6 @@ def detect_intent(query: str) -> MultiIntentResult:
         })
 
     return {
-        "primary": intents[0],
-        "secondary": intents[1:] if len(intents) > 1 else None
+    "primary": intents[0],
+    "secondary": intents[1:] if len(intents) > 1 else []
     }
