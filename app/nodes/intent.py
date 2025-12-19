@@ -1,10 +1,8 @@
 from typing import List
 from app.schemas import IntentResult, MultiIntentResult
 
-def detect_intent(query: str) -> MultiIntentResult:
-    query_lower = query.lower()
-
-    INTENT_RULES = {
+# Global intent rules with weights
+INTENT_RULES = {
     "bridge_funds": {
         "keywords": ["bridge", "transfer", "move"],
         "weight": 1.0
@@ -17,9 +15,13 @@ def detect_intent(query: str) -> MultiIntentResult:
         "keywords": [],
         "weight": 0.3
     }
-    }
+}
 
-    def score_intent(query: str, rule: dict) -> float:
+
+def score_intent(query: str, rule: dict) -> float:
+    """
+    Calculate weighted score for an intent rule
+    """
     score = 0.0
     for kw in rule["keywords"]:
         if kw in query:
@@ -28,8 +30,11 @@ def detect_intent(query: str) -> MultiIntentResult:
 
 
 def detect_intent(query: str) -> MultiIntentResult:
+    """
+    Detect primary and secondary intents using weighted scoring
+    """
     query_lower = query.lower()
-    scored = []
+    scored: List[dict] = []
 
     for name, rule in INTENT_RULES.items():
         score = score_intent(query_lower, rule)
@@ -39,6 +44,7 @@ def detect_intent(query: str) -> MultiIntentResult:
                 "score": score
             })
 
+    # Fallback: no intent detected
     if not scored:
         return {
             "primary": {
@@ -49,17 +55,18 @@ def detect_intent(query: str) -> MultiIntentResult:
             "secondary": []
         }
 
+    # Sort by score (highest first)
     scored.sort(key=lambda x: x["score"], reverse=True)
 
     primary = scored[0]
     secondary = scored[1:]
 
-    confidence = min(1.0, primary["score"] / 3)
+    primary_confidence = min(1.0, primary["score"] / 3)
 
     return {
         "primary": {
             "name": primary["name"],
-            "confidence": round(confidence, 2),
+            "confidence": round(primary_confidence, 2),
             "reason": "Highest weighted intent score"
         },
         "secondary": [
@@ -70,16 +77,4 @@ def detect_intent(query: str) -> MultiIntentResult:
             }
             for s in secondary
         ]
-    }
-    
-    if not intents:
-        intents.append({
-            "name": "general_query",
-            "confidence": 0.6,
-            "reason": "No clear action keyword detected"
-        })
-
-    return {
-    "primary": intents[0],
-    "secondary": intents[1:] if len(intents) > 1 else []
-    }
+        }
