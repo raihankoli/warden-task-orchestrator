@@ -10,32 +10,45 @@ def action_router_node(state: AgentState) -> AgentState:
     confidence = primary.get("confidence", 0.0)
 
     action = {
-        "type": "inform",
-        "target": None
+        "type": "guidance",
+        "target": None,
+        "message": "No direct action selected"
     }
 
-    if intent_name == "bridge_funds" and confidence >= 0.75:
+    # High-confidence actions
+    if confidence >= 0.75:
+        if intent_name == "bridge_funds":
+            action = {
+                "type": "handoff",
+                "target": "bridge_agent",
+                "message": "Ready to handoff to Bridge Agent"
+            }
+
+        elif intent_name == "risk_check":
+            action = {
+                "type": "review",
+                "target": "risk_agent",
+                "message": "Recommend risk review before execution"
+            }
+
+        else:
+            action = {
+                "type": "guidance",
+                "target": None,
+                "message": "Proceed with planned steps"
+            }
+
+    else:
         action = {
-            "type": "handoff",
-            "target": "bridge_agent"
+            "type": "clarify",
+            "target": None,
+            "message": "Intent confidence low, need clarification"
         }
 
-    elif intent_name == "risk_check":
-        action = {
-            "type": "handoff",
-            "target": "risk_agent"
-        }
-
-    elif confidence < 0.75:
-        action = {
-            "type": "confirm",
-            "target": None
-        }
-
-    reasoning.append(f"Action decided: {action['type']}")
+    reasoning.append(f"Action decision: {action['type']}")
 
     return {
         **state,
         "action": action,
         "reasoning": reasoning
-  }
+    }
