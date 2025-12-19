@@ -72,8 +72,24 @@ All actions are **advisory, simulated, or handed off** to specialized agents.
 This agent acts purely as an **orchestration and reasoning layer**.
 ---
 
+## 🔄 Simple Execution Flow
+
+### 🧪 Example Flow
+
+**Input**
+
+**Output**
+- **Intent:** `bridge_funds` (0.90 confidence)
+- **Plan:** 3-step execution plan
+- **Action:** `handoff → Bridge Agent`
+
+This flow ensures that **no action is executed directly** — only validated recommendations or agent handoffs are produced.
+
+This agent follows a deterministic, safety-first orchestration flow powered by **LangGraph**.
+
 ## 🔍 Example Response
 
+```json
 {
   "summary": "Detected intent: bridge_funds",
   "confidence": 0.9,
@@ -84,7 +100,7 @@ This agent acts purely as an **orchestration and reasoning layer**.
   ],
   "action": {
     "type": "handoff",
-    "target": "bridge_agent"
-  },
-  "decision_path": ["intent", "plan", "action"]
+    "target": "Bridge Agent",
+    "message": "Ready to hand off to Bridge Agent"
+  }
 }
