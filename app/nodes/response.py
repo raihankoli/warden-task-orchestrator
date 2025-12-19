@@ -1,23 +1,30 @@
 from app.schemas import AgentState
 
-def response_node(state: AgentState) -> dict:
+CONFIDENCE_THRESHOLD = 0.75
+
+
+def response_node(state: AgentState) -> AgentState:
     intent = state.get("intent", {})
-    plan = state.get("plan", []) or []
-    reasoning = state.get("reasoning", []) or []
+    reasoning = state.get("reasoning", [])
+    plan = state.get("plan", [])
 
-    primary_intent = intent.get("primary", {}).get("name", "unknown")
+    primary = intent.get("primary", {})
+    confidence = primary.get("confidence", 0.0)
+    intent_name = primary.get("name", "unknown")
 
-    if primary_intent == "bridge_funds":
-        next_action = "Ready to handoff to Bridge Agent"
-    elif primary_intent == "risk_check":
-        next_action = "Recommend safety review before execution"
-    else:
-        next_action = "Awaiting clearer user intent"
+    response = {
+        "summary": f"Detected intent: {intent_name}",
+        "confidence": confidence,
+        "reasoning": reasoning,
+        "recommended_steps": plan,
+        "next_action": (
+            "Proceed carefully following the steps above"
+            if confidence >= CONFIDENCE_THRESHOLD
+            else "Please clarify your goal for better guidance"
+        ),
+    }
 
     return {
-        "query": state.get("query"),
-        "intent": intent,
-        "reasoning": reasoning,
-        "plan": plan,
-        "next_action": next_action
-  }
+        **state,
+        "response": response,
+    }
