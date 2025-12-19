@@ -1,30 +1,29 @@
 from app.schemas import AgentState
 
-CONFIDENCE_THRESHOLD = 0.75
-
-
 def response_node(state: AgentState) -> AgentState:
     intent = state.get("intent", {})
     reasoning = state.get("reasoning", [])
     plan = state.get("plan", [])
+    action = state.get("action", {})
+    decision_path = state.get("decision_path", [])
 
     primary = intent.get("primary", {})
     confidence = primary.get("confidence", 0.0)
-    intent_name = primary.get("name", "unknown")
 
     response = {
-        "summary": f"Detected intent: {intent_name}",
+        "summary": f"Detected intent: {primary.get('name', 'unknown')}",
         "confidence": confidence,
         "reasoning": reasoning,
         "recommended_steps": plan,
-        "next_action": (
-            "Proceed carefully following the steps above"
-            if confidence >= CONFIDENCE_THRESHOLD
-            else "Please clarify your goal for better guidance"
-        ),
+        "action": action,
+        "decision_path": decision_path,
+        "next_action": action.get(
+            "message",
+            "No further action decided"
+        )
     }
 
     return {
         **state,
-        "response": response,
+        "response": response
     }
