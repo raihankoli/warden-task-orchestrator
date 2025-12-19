@@ -21,3 +21,13 @@ class IntentResult(TypedDict):
 class MultiIntentResult(TypedDict):
     primary: IntentResult
     secondary: Optional[List[IntentResult]]
+
+from typing import List, Optional, TypedDict
+
+
+class ExplainableOutput(TypedDict):
+    query: str
+    intent: dict
+    reasoning: List[str]
+    plan: List[str]
+    next_action: str
