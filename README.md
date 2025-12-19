@@ -1,3 +1,8 @@
+## 🧠 Big Brain for Warden
+
+This agent acts as the cognitive layer of the Warden ecosystem —
+thinking, planning, and coordinating before any action is taken.
+
 # 🧠 Warden Task Orchestrator  
 > The brain that thinks before you act.
 
