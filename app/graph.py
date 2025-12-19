@@ -67,6 +67,7 @@ def build_graph():
     graph.add_node("intent", intent_node)
     graph.add_node("clarify", clarify_node)
     graph.add_node("plan", planner_node)
+    graph.add_node("response", response_node)
 
     graph.set_entry_point("intent")
 
@@ -79,9 +80,8 @@ def build_graph():
         }
     )
 
-    graph.add_node("intent", intent_node)
-	graph.add_node("clarify", clarify_node)
-	graph.add_node("plan", planner_node)
-	graph.add_node("response", response_node)
+    graph.add_edge("plan", "response")
+    graph.add_edge("clarify", "response")
+    graph.add_edge("response", END)
 
     return graph.compile()
