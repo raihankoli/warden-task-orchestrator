@@ -78,3 +78,25 @@ def detect_intent(query: str) -> MultiIntentResult:
             for s in secondary
         ]
         }
+
+def resolve_intent_conflicts(intent_result: MultiIntentResult) -> MultiIntentResult:
+    """
+    Normalize and sanitize intent output for downstream nodes
+    """
+    primary = intent_result.get("primary", {})
+    secondary = intent_result.get("secondary", [])
+
+    # Ensure secondary is always a list
+    if secondary is None:
+        secondary = []
+
+    # Cap confidence safely
+    primary["confidence"] = min(1.0, max(0.0, primary.get("confidence", 0.0)))
+
+    for sec in secondary:
+        sec["confidence"] = min(1.0, max(0.0, sec.get("confidence", 0.0)))
+
+    return {
+        "primary": primary,
+        "secondary": secondary
+}
