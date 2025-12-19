@@ -3,6 +3,7 @@ from app.schemas import AgentState
 from app.nodes.intent import detect_intent
 from app.nodes.planner import build_plan
 from app.nodes.response import response_node
+from app.nodes.action import action_router_node
 
 CONFIDENCE_THRESHOLD = 0.75
 
@@ -64,24 +65,26 @@ def planner_node(state: AgentState) -> AgentState:
 def build_graph():
     graph = StateGraph(AgentState)
 
-    graph.add_node("intent", intent_node)
-    graph.add_node("clarify", clarify_node)
-    graph.add_node("plan", planner_node)
-    graph.add_node("response", response_node)
+graph.add_node("intent", intent_node)
+graph.add_node("clarify", clarify_node)
+graph.add_node("plan", planner_node)
+graph.add_node("action", action_router_node)
+graph.add_node("response", response_node)
 
-    graph.set_entry_point("intent")
+graph.set_entry_point("intent")
 
-    graph.add_conditional_edges(
-        "intent",
-        confidence_router,
-        {
-            "plan": "plan",
-            "clarify": "clarify"
-        }
-    )
+graph.add_conditional_edges(
+    "intent",
+    confidence_router,
+    {
+        "plan": "plan",
+        "clarify": "clarify"
+    }
+)
 
-    graph.add_edge("plan", "response")
-    graph.add_edge("clarify", "response")
-    graph.add_edge("response", END)
+graph.add_edge("plan", "action")
+graph.add_edge("clarify", "action")
+graph.add_edge("action", "response")
+graph.add_edge("response", END)
 
-    return graph.compile()
+return graph.compile()
