@@ -63,21 +63,23 @@ def detect_intent(query: str) -> MultiIntentResult:
 
     primary_confidence = min(1.0, primary["score"] / 3)
 
-    return {
-        "primary": {
-            "name": primary["name"],
-            "confidence": round(primary_confidence, 2),
-            "reason": "Highest weighted intent score"
-        },
-        "secondary": [
-            {
-                "name": s["name"],
-                "confidence": round(min(1.0, s["score"] / 3), 2),
-                "reason": "Supporting signal detected"
-            }
-            for s in secondary
-        ]
+    raw_result = {
+    "primary": {
+        "name": primary["name"],
+        "confidence": round(primary_confidence, 2),
+        "reason": "Highest weighted intent score"
+    },
+    "secondary": [
+        {
+            "name": s["name"],
+            "confidence": round(min(1.0, s["score"] / 3), 2),
+            "reason": "Supporting signal detected"
         }
+        for s in secondary
+    ]
+}
+
+return resolve_intent_conflicts(raw_result)
 
 def resolve_intent_conflicts(intent_result: MultiIntentResult) -> MultiIntentResult:
     """
