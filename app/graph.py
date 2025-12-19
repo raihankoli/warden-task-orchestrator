@@ -88,3 +88,27 @@ graph.add_edge("action", "response")
 graph.add_edge("response", END)
 
 return graph.compile()
+
+graph = build_graph()
+
+def run_agent(query: str) -> dict:
+    """
+    Public entrypoint for Agent Hub / API usage
+    """
+    state = {
+        "query": query,
+        "intent": None,
+        "plan": None,
+        "reasoning": None,
+        "response": None
+    }
+
+    result = graph.invoke(state)
+
+    return {
+        "query": query,
+        "summary": result["response"]["summary"],
+        "confidence": result["response"]["confidence"],
+        "recommended_steps": result["response"]["recommended_steps"],
+        "next_action": result["response"]["next_action"]
+    }
