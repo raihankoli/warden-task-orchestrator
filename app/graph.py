@@ -31,6 +31,7 @@ def intent_node(state: AgentState) -> AgentState:
         **state,
         "intent": result,
         "reasoning": reasoning
+        "decision_path": ["intent"]
     }
 
 
