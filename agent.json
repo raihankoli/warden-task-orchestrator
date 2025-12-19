@@ -1,0 +1,23 @@
+{
+  "name": "Warden Task Orchestrator",
+  "slug": "warden-task-orchestrator",
+  "description": "A LangGraph-powered orchestration agent that detects intent, builds safe execution plans, and routes tasks to the correct Warden agents without executing transactions.",
+  "version": "0.1.0",
+  "framework": "langgraph",
+  "category": "orchestration",
+  "capabilities": [
+    "intent_detection",
+    "task_planning",
+    "agent_routing",
+    "explainable_reasoning"
+  ],
+  "safety": {
+    "wallet_access": false,
+    "transaction_execution": false,
+    "private_key_handling": false,
+    "data_storage": false
+  },
+  "entrypoint": "app/graph.py",
+  "author": "raihankoli",
+  "license": "MIT"
+}
