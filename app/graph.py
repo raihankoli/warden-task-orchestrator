@@ -56,12 +56,11 @@ def clarify_node(state: AgentState) -> AgentState:
 
 
 def planner_node(state: AgentState) -> AgentState:
-    plan = build_plan(state["intent"])
     return {
-        **state,
-        "plan": plan
+    **state,
+    "plan": plan,
+    "decision_path": (state.get("decision_path", []) + ["plan"])
     }
-
 
 def build_graph():
     graph = StateGraph(AgentState)
