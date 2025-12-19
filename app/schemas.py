@@ -8,8 +8,9 @@ class UserRequest(BaseModel):
 
 class AgentState(TypedDict):
     query: str
-    intent: Optional[str]
+    intent: Optional[dict]
     plan: Optional[List[str]]
+    reasoning: Optional[List[str]]
 
 
 class IntentResult(TypedDict):
