@@ -2,6 +2,7 @@ from langgraph.graph import StateGraph, END
 from app.schemas import AgentState
 from app.nodes.intent import detect_intent
 from app.nodes.planner import build_plan
+from app.nodes.response import response_node
 
 CONFIDENCE_THRESHOLD = 0.75
 
@@ -10,7 +11,7 @@ def intent_node(state: AgentState) -> AgentState:
     result = detect_intent(state["query"])
 
     reasoning = []
-    primary = result["primary"]
+    primary = result.get("primary", {})
 
     reasoning.append(
         f"Detected primary intent: {primary['name']} "
@@ -78,7 +79,9 @@ def build_graph():
         }
     )
 
-    graph.add_edge("plan", END)
-    graph.add_edge("clarify", END)
+    graph.add_node("intent", intent_node)
+	graph.add_node("clarify", clarify_node)
+	graph.add_node("plan", planner_node)
+	graph.add_node("response", response_node)
 
     return graph.compile()
