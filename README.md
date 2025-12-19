@@ -1,8 +1,3 @@
-## 🧠 Big Brain for Warden
-
-This agent acts as the cognitive layer of the Warden ecosystem —
-thinking, planning, and coordinating before any action is taken.
-
 # 🧠 Warden Task Orchestrator  
 > The brain that thinks before you act.
 
@@ -63,17 +58,33 @@ No state storage.
 Pure orchestration & guidance — aligned with Warden Phase-1 security.
 
 ---
+## 🔒 Agent Hub Safety & Compliance
+
+This agent is designed to fully comply with Warden Agent Hub Phase-1 rules:
+
+- ❌ No wallet access
+- ❌ No private key handling
+- ❌ No transaction execution
+- ❌ No data storage on Warden infra
+
+All actions are **advisory, simulated, or handed off** to specialized agents.
+
+This agent acts purely as an **orchestration and reasoning layer**.
+---
 
 ## 🔍 Example Response
 
-```json
 {
-  "query": "I want to bridge USDC to Base",
-  "detected_intent": "bridge_funds",
-  "recommended_agent": "Bridge Agent",
-  "plan": [
-    "Use a trusted bridge to move USDC across chains",
+  "summary": "Detected intent: bridge_funds",
+  "confidence": 0.9,
+  "recommended_steps": [
+    "Select a trusted bridge",
     "Verify destination chain and token support",
-    "Review bridge-related risks before proceeding"
-  ]
-  }
+    "Review bridge-related risks"
+  ],
+  "action": {
+    "type": "handoff",
+    "target": "bridge_agent"
+  },
+  "decision_path": ["intent", "plan", "action"]
+}
